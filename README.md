@@ -6,7 +6,8 @@
 
 Don't feed as input an empty string to `JASON.parse()`.
 
-❌ **Wrong**  
+❌ **Wrong**
+
 ```typescript
 // WRONG
 JSON.parse(localStorage.getItem("isOpen")) || false;
@@ -14,9 +15,35 @@ JSON.parse(localStorage.getItem("isOpen")) || false;
 JSON.parse(localStorage.getItem("isOpen") || "") || false;
 ```
 
-✅ **Good**  
+✅ **Good**
+
 ```typescript
-JSON.parse(localStorage.getItem("isOpen") || "false")
+JSON.parse(localStorage.getItem("isOpen") || "false");
+```
+
+### Create generic local storage hook
+
+```typescript
+import { useEffect, useState } from "react";
+
+const useLocalStorage = <T extends string | object | boolean | null | number>(
+  storageKey: string,
+  defaulValue: T,
+): [T, React.Dispatch<React.SetStateAction<T>>] => {
+  const initialValue = JSON.stringify(defaulValue);
+
+  const [value, setValue] = useState<T>(
+    JSON.parse(localStorage.getItem(storageKey) || initialValue),
+  );
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, JSON.stringify(value));
+  }, [storageKey, value]);
+
+  return [value, setValue];
+};
+
+export default useLocalStorage;
 ```
 
 ## Powered by
@@ -38,12 +65,12 @@ If you are developing a production application, we recommend updating the config
 export default {
   // other rules...
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
+    ecmaVersion: "latest",
+    sourceType: "module",
+    project: ["./tsconfig.json", "./tsconfig.node.json"],
     tsconfigRootDir: __dirname,
   },
-}
+};
 ```
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
