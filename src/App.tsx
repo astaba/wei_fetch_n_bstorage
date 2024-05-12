@@ -26,7 +26,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState("");
 
-  const handleBtnClick = () => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
     setUrl(getUrl(searchTerm));
   };
 
@@ -55,22 +56,17 @@ function App() {
   return (
     <div>
       <h1 className="text-[3.2em] leading-[1.1] text-center">Fetch Data</h1>
-      <div>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="text-inherit text-lg px-2 py-1 mr-4"
         />
-        <button
-          type="button"
-          onClick={handleBtnClick}
-          disabled={!searchTerm}
-          className="btn"
-        >
+        <button type="submit" disabled={!searchTerm} className="btn">
           Search
         </button>
-      </div>
+      </form>
       <hr />
       {isError && <h3>{isError}</h3>}
       {isLoading ? (
