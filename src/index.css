@@ -26,15 +26,13 @@
 
   body {
     margin: 0;
-    display: flex;
-    place-items: center;
     min-width: 320px;
     min-height: 100vh;
   }
 }
 
 .div-root {
-  @apply mx-auto max-w-screen-xl p-8 text-center;
+  @apply mx-auto max-w-screen-xl p-8;
 }
 
 .anchor {
@@ -44,4 +42,3 @@
 .logo {
   @apply h-[6em] p-[1.5em] transition-[filter] duration-300 will-change-filter hover:drop-shadow-[0_0_2em_rgba(100,108,255,0.667)];
 }
-
