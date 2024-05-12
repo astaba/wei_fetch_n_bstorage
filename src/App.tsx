@@ -23,6 +23,7 @@ function App() {
     "landscape",
   );
   const [url, setUrl] = useState(getUrl(searchTerm));
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleBtnClick = () => {
     setUrl(getUrl(searchTerm));
@@ -30,9 +31,11 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       const result = await axios.get(url);
       // console.log(result);
       setHits(result.data.hits);
+      setIsLoading(false);
     };
     fetchData();
   }, [url]);
@@ -57,7 +60,9 @@ function App() {
         </button>
       </div>
       <hr />
-      {hits.length > 0 && (
+      {isLoading ? (
+        <h3 className="">Loading...</h3>
+      ) : (
         <ul>
           {hits.map((item) => (
             <li key={item.objectID}>
