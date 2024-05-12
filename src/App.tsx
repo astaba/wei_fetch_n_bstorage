@@ -9,7 +9,12 @@ interface IHit {
   url: string;
 }
 
-const API_ENDPOINT = "http://hn.algolia.com/api/v1/search?query=";
+const getUrl = (query: string) => {
+  const API_BASE = "http://hn.algolia.com/api/v1/search";
+  const url = new URL(API_BASE);
+  url.searchParams.set("query", query);
+  return url.href;
+};
 
 function App() {
   const [hits, setHits] = useState<IHit[]>([]);
@@ -17,21 +22,21 @@ function App() {
     "hitSearch",
     "landscape",
   );
-  const [query, setQuery] = useState(searchTerm);
+  const [url, setUrl] = useState(getUrl(searchTerm));
 
   const handleBtnClick = () => {
-    setQuery(searchTerm);
+    setUrl(getUrl(searchTerm));
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!query) return;
-      const result = await axios.get(`${API_ENDPOINT}${query}`);
+      const result = await axios.get(url);
       // console.log(result);
       setHits(result.data.hits);
     };
     fetchData();
-  }, [query]);
+  }, [url]);
+
   return (
     <div>
       <h1 className="text-[3.2em] leading-[1.1] text-center">Fetch Data</h1>
@@ -42,7 +47,12 @@ function App() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="text-inherit text-lg px-2 py-1 mr-4"
         />
-        <button type="button" onClick={handleBtnClick} className="btn">
+        <button
+          type="button"
+          onClick={handleBtnClick}
+          disabled={!searchTerm}
+          className="btn"
+        >
           Search
         </button>
       </div>
