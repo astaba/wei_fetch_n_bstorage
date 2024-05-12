@@ -24,6 +24,7 @@ function App() {
   );
   const [url, setUrl] = useState(getUrl(searchTerm));
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState("");
 
   const handleBtnClick = () => {
     setUrl(getUrl(searchTerm));
@@ -31,11 +32,22 @@ function App() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsError("");
       setIsLoading(true);
-      const result = await axios.get(url);
-      // console.log(result);
-      setHits(result.data.hits);
-      setIsLoading(false);
+      try {
+        const result = await axios.get(url);
+        // console.log(result);
+        setHits(result.data.hits);
+      } catch (err) {
+        console.log(err);
+        if (err instanceof Error) {
+          setIsError(err.message);
+        } else {
+          setIsError("Something went wrong!");
+        }
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchData();
   }, [url]);
@@ -60,6 +72,7 @@ function App() {
         </button>
       </div>
       <hr />
+      {isError && <h3>{isError}</h3>}
       {isLoading ? (
         <h3 className="">Loading...</h3>
       ) : (
