@@ -42,3 +42,7 @@
 .logo {
   @apply h-[6em] p-[1.5em] transition-[filter] duration-300 will-change-filter hover:drop-shadow-[0_0_2em_rgba(100,108,255,0.667)];
 }
+
+.btn {
+  @apply cursor-pointer rounded-lg border border-solid border-transparent bg-gray-100 px-[1.2em] py-[0.6em] font-sans text-[1em] font-medium tracking-widest transition-[border] duration-[0.25s] hover:border-[#646cff] focus:outline focus:outline-2 focus:outline-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400 dark:bg-gray-900;
+}

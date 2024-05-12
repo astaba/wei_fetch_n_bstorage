@@ -1,31 +1,43 @@
-import useLocalStorage from "./hook/useLocalStorage";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+interface IHit {
+  title: string;
+  objectID: number;
+  url: string;
+}
+
+const API_ENDPOINT = "http://hn.algolia.com/api/v1/search?query=";
 
 function App() {
-  const [isOpen, setIsOpen] = useLocalStorage<boolean>("isOpen", false);
+  const [hits, setHits] = useState<IHit[]>([]);
 
-  const handleClick = () => {
-    setIsOpen(!isOpen);
-  };
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios.get(`${API_ENDPOINT}landscape`);
+      // console.log(result);
+      setHits(result.data.hits);
+    };
+    fetchData();
+  }, []);
   return (
     <div>
-      <h1 className="text-[3.2em] leading-[1.1] text-center">
-        Browser Storage
-      </h1>
-      <button
-        onClick={handleClick}
-        className="btn-focus cursor-pointer rounded-lg border border-solid border-transparent bg-gray-100 px-[1.2em] py-[0.6em] font-sans text-[1em] font-medium tracking-widest transition-[border] duration-[0.25s] hover:border-[#646cff] focus:outline focus:outline-2 focus:outline-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400 dark:bg-gray-900"
-      >
-        Toggle
-      </button>
+      <h1 className="text-[3.2em] leading-[1.1] text-center">Fetch Data</h1>
       <hr />
-      {isOpen && (
-        <p className="text-gray-300">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic iure
-          ullam quam quas explicabo. Minima veniam quasi quidem numquam iusto
-          praesentium totam consectetur, dolore laboriosam alias. Esse doloribus
-          modi eius.
-        </p>
+      {hits.length > 0 && (
+        <ul>
+          {hits.map((item) => (
+            <li key={item.objectID}>
+              <a
+                href={item.url}
+                target="_blank"
+                className="text-current no-underline hover:underline"
+              >
+                {item.title}
+              </a>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );
