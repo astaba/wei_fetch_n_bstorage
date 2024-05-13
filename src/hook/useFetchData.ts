@@ -46,14 +46,15 @@ function useFetchData({
   const [url, setUrl] = useState(watchedUrl);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchData = async () => {
       dispatchCoState({ type: FETCH_INIT });
       try {
         const result = await axios.get(url);
         // console.log(result);
-        // Unless using zod state schema library
-        // Taylor result to fit T state type
-        dispatchCoState({ type: FETCH_SUCCESS, payload: result.data.hits });
+        if (isMounted) {
+          dispatchCoState({ type: FETCH_SUCCESS, payload: result.data.hits });
+        }
       } catch (err) {
         console.log(err);
         let errorMsg = "";
@@ -62,10 +63,16 @@ function useFetchData({
         } else {
           errorMsg = "Something went wrong!";
         }
-        dispatchCoState({ type: FETCH_FAIL, payload: errorMsg });
+        if (isMounted) {
+          dispatchCoState({ type: FETCH_FAIL, payload: errorMsg });
+        }
       }
     };
     fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [url]);
 
   return {
