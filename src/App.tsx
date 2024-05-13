@@ -1,12 +1,6 @@
 import useLocalStorage from "./hook/useLocalStorage";
 import useFetchData from "./hook/useFetchData";
 
-interface IHit {
-  title: string;
-  objectID: number;
-  url: string;
-}
-
 const getUrl = (query: string) => {
   const API_BASE = "http://hn.algolia.com/api/v1/search";
   const url = new URL(API_BASE);
@@ -23,7 +17,7 @@ function App() {
   const {
     setUrl,
     fetcher: { isError, isLoading, data: hits },
-  } = useFetchData<IHit[]>({
+  } = useFetchData({
     watchedUrl: getUrl(searchTerm),
     initialData: [],
   });
