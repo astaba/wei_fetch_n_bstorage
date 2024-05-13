@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-
 import useLocalStorage from "./hook/useLocalStorage";
+import useFetchData from "./hook/useFetchData";
 
 interface IHit {
   title: string;
@@ -17,41 +15,23 @@ const getUrl = (query: string) => {
 };
 
 function App() {
-  const [hits, setHits] = useState<IHit[]>([]);
   const [searchTerm, setSearchTerm] = useLocalStorage<string>(
     "hitSearch",
     "landscape",
   );
-  const [url, setUrl] = useState(getUrl(searchTerm));
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState("");
+
+  const {
+    setUrl,
+    fetcher: { isError, isLoading, data: hits },
+  } = useFetchData<IHit[]>({
+    watchedUrl: getUrl(searchTerm),
+    initialData: [],
+  });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
     setUrl(getUrl(searchTerm));
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsError("");
-      setIsLoading(true);
-      try {
-        const result = await axios.get(url);
-        // console.log(result);
-        setHits(result.data.hits);
-      } catch (err) {
-        console.log(err);
-        if (err instanceof Error) {
-          setIsError(err.message);
-        } else {
-          setIsError("Something went wrong!");
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [url]);
 
   return (
     <div>
